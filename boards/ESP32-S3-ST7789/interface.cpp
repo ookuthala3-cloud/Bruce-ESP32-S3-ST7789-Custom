@@ -78,6 +78,7 @@ void InputHandler(void) {
     SelPress = false;
     AnyKeyPress = false;
     EscPress = false;
+    DownPress = false;
 
     bool up     = digitalRead(BTN_UP) == LOW;
     bool down   = digitalRead(BTN_DOWN) == LOW;
