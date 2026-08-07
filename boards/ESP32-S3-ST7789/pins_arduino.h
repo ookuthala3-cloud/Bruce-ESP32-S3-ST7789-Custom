@@ -70,6 +70,7 @@ static const uint8_t G21 = 21;
 
 static const uint8_t G40 = 40;
 static const uint8_t G41 = 41;
+static const uint8_t G42 = 42;
 static const uint8_t G43 = 43;
 static const uint8_t G44 = 44;
 static const uint8_t G47 = 47;
@@ -154,8 +155,8 @@ static const uint8_t G48 = 48;
 // Shares SPI bus
 // ======================================================
 
-#define NRF24_CE_PIN 14
-#define NRF24_SS_PIN 48
+#define NRF24_CE_PIN 3
+#define NRF24_SS_PIN 42
 
 #define NRF24_MOSI_PIN SPI_MOSI_PIN
 #define NRF24_SCK_PIN  SPI_SCK_PIN
