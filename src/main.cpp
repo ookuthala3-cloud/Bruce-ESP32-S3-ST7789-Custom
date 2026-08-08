@@ -469,11 +469,35 @@ void setup() {
     BLEConnected = false;
     bruceConfig.bright = 100; // theres is no value yet
     bruceConfigPins.rotation = ROTATION;
-    setup_gpio();
-#if defined(HAS_SCREEN)
+    setup_gpio_();
+
+    Serial.println("[DEBUG] setup_gpio_ DONE");
+    Serial.flush();
+    delay(200);
+
+    #if defined(HAS_SCREEN)
+
+    Serial.println("[DEBUG] BEFORE TFT INIT");
+    Serial.flush();
+    delay(200);
+
     tft.init();
+
+    Serial.println("[DEBUG] TFT INIT OK");
+    Serial.flush();
+    delay(200);
+
     tft.setRotation(bruceConfigPins.rotation);
+
+    Serial.println("[DEBUG] TFT ROTATION OK");
+    Serial.flush();
+    delay(200);
+
     tft.fillScreen(TFT_BLACK);
+
+    Serial.println("[DEBUG] TFT FILLSCREEN OK");
+    Serial.flush();
+    delay(200);
     // bruceConfig is not read yet.. just to show something on screen due to long boot time
     tft.setTextColor(TFT_PURPLE, TFT_BLACK);
     tft.drawCentreString("Booting", tft.width() / 2, tft.height() / 2, 1);
