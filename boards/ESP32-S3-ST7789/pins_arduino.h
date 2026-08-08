@@ -84,6 +84,7 @@ static const uint8_t G48 = 48;
 // DISPLAY - ST7789 240x240
 // ======================================================
 
+#define USE_HSPI_PORT
 #define HAS_SCREEN 1
 
 #define USER_SETUP_LOADED 1
