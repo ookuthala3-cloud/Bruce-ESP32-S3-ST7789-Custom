@@ -469,7 +469,7 @@ void setup() {
     BLEConnected = false;
     bruceConfig.bright = 100; // theres is no value yet
     bruceConfigPins.rotation = ROTATION;
-    setup_gpio_();
+    setup_gpio();
 
     Serial.println("[DEBUG] setup_gpio_ DONE");
     Serial.flush();
