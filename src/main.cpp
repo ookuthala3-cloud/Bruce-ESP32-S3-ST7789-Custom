@@ -220,19 +220,20 @@ void setup_gpio() {
     // Custom ESP32-S3 board GPIO setup.
     _setup_gpio();
 
-    // TEMPORARY ISOLATION TEST:
-    // Keep the I/O expander and CC1101/SPI-bus initialization disabled
-    // until the ST7789 display has been proven to initialize correctly.
-    //
+    // Keep ioExpander disabled for this test.
+    // Enable only CC1101 so we can verify it independently.
     // ioExpander.init(IO_EXPANDER_ADDRESS, &Wire);
-    //
-    // initCC1101once(acquireSPIBus(
-    //     bruceConfigPins.CC1101_bus.sck,
-    //     bruceConfigPins.CC1101_bus.miso,
-    //     bruceConfigPins.CC1101_bus.mosi
-    // ));
 
-    Serial.println("[DEBUG] CC1101 + ioExpander pre-init SKIPPED");
+    Serial.println("[DEBUG] BEFORE CC1101 INIT");
+    Serial.flush();
+
+    initCC1101once(acquireSPIBus(
+        bruceConfigPins.CC1101_bus.sck,
+        bruceConfigPins.CC1101_bus.miso,
+        bruceConfigPins.CC1101_bus.mosi
+    ));
+
+    Serial.println("[DEBUG] CC1101 INIT DONE");
     Serial.flush();
 }
 
