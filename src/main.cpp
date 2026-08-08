@@ -471,11 +471,51 @@ void setup() {
     bruceConfigPins.rotation = ROTATION;
     setup_gpio();
 
-    Serial.println("[DEBUG] setup_gpio_ DONE");
+    Serial.println("[DEBUG] setup_gpio DONE");
     Serial.flush();
     delay(200);
 
-    #if defined(HAS_SCREEN)
+#if defined(HAS_SCREEN)
+
+    Serial.printf(
+        "[DEBUG] TFT pins SCK=%d MOSI=%d MISO=%d CS=%d DC=%d RST=%d\\n",
+        TFT_SCLK,
+        TFT_MOSI,
+        TFT_MISO,
+        TFT_CS,
+        TFT_DC,
+        TFT_RST
+    );
+    Serial.flush();
+
+    Serial.println("[DEBUG] BEFORE SPI.begin");
+    Serial.flush();
+
+    SPI.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, TFT_CS);
+
+    Serial.println("[DEBUG] SPI.begin OK");
+    Serial.flush();
+    delay(200);
+
+    pinMode(TFT_CS, OUTPUT);
+    pinMode(TFT_DC, OUTPUT);
+    pinMode(TFT_RST, OUTPUT);
+
+    digitalWrite(TFT_CS, HIGH);
+    digitalWrite(TFT_DC, HIGH);
+
+    Serial.println("[DEBUG] BEFORE LCD RESET");
+    Serial.flush();
+
+    digitalWrite(TFT_RST, HIGH);
+    delay(20);
+    digitalWrite(TFT_RST, LOW);
+    delay(20);
+    digitalWrite(TFT_RST, HIGH);
+    delay(150);
+
+    Serial.println("[DEBUG] LCD RESET OK");
+    Serial.flush();
 
     Serial.println("[DEBUG] BEFORE TFT INIT");
     Serial.flush();
