@@ -128,8 +128,7 @@ jobs:
 
           version="${GITHUB_SHA::7}"
           echo "Using commit SHA: $version"
-
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          echo "VERSION=$version" >> "$GITHUB_OUTPUT"
 
           sed -i "s/-DBRUCE_VERSION=/-DBRUCE_VERSION='\"$version\"' ; /g" ./platformio.ini
           sed -i "s/-DGIT_COMMIT_HASH='\"Homebrew\"'/!echo '-DGIT_COMMIT_HASH=\\\\\"'\$(git describe --always --dirty)'\\\\\"'/g" ./platformio.ini
@@ -137,16 +136,46 @@ jobs:
       - name: Run Compile
         run: |
           set -o pipefail
-          echo "Building environment: ${{ env.SELECTED_ENV }}"
-          platformio run -e "${{ env.SELECTED_ENV }}" | tee "build-${{ env.SELECTED_ENV }}.log"
+          echo "Building environment: $SELECTED_ENV"
+          platformio run -e "$SELECTED_ENV" | tee "build-$SELECTED_ENV.log"
 
       - name: Build summary
         run: |
-          if [[ -f "build-${{ env.SELECTED_ENV }}.log" ]]; then
-            echo "Last 75 lines of build-${{ env.SELECTED_ENV }}.log:"
-            tail -n 75 "build-${{ env.SELECTED_ENV }}.log"
+          if [ -f "build-$SELECTED_ENV.log" ]; then
+            echo "Last 75 lines of build-$SELECTED_ENV.log:"
+            tail -n 75 "build-$SELECTED_ENV.log"
           else
-            echo "Build log not found; nothing to show."
+            echo "Build log not found."
+          fi
+
+      - name: Prepare Debug Files
+        run: |
+          echo "Copying debug files..."
+
+          ELF_PATH=".pio/build/$SELECTED_ENV/firmware.elf"
+          MAP_PATH=".pio/build/$SELECTED_ENV/firmware.map"
+
+          if [ -f "$ELF_PATH" ]; then
+            cp "$ELF_PATH" firmware.elf
+            echo "firmware.elf copied successfully."
+          else
+            echo "ERROR: firmware.elf not found at $ELF_PATH"
+            find .pio/build -name "*.elf" -type f -print || true
+            exit 1
+          fi
+
+          if [ -f "$MAP_PATH" ]; then
+            cp "$MAP_PATH" firmware.map
+            echo "firmware.map copied successfully."
+          else
+            echo "firmware.map not found - continuing without it."
+          fi
+
+          echo "Files prepared for artifact:"
+          ls -lh firmware.elf
+
+          if [ -f firmware.map ]; then
+            ls -lh firmware.map
           fi
 
       - name: Upload Artifacts
@@ -155,8 +184,8 @@ jobs:
           name: Bruce-${{ env.SELECTED_ENV }}
           path: |
             Bruce-*.*
-            .pio/build/${{ env.SELECTED_ENV }}/firmware.elf
-            .pio/build/${{ env.SELECTED_ENV }}/firmware.map
+            firmware.elf
+            firmware.map
             build-${{ env.SELECTED_ENV }}.log
           retention-days: 1
           if-no-files-found: error
@@ -164,12 +193,13 @@ jobs:
       - name: Display Build Info
         run: |
           echo "Build completed successfully!"
-          echo "Environment: ${{ env.SELECTED_ENV }}"
+          echo "Environment: $SELECTED_ENV"
           echo "Version: ${{ steps.prepare_version.outputs.VERSION }}"
           echo "Git Hash: $(git describe --always --dirty)"
-          echo "Built files:"
-          ls -la Bruce-*.* 2>/dev/null || echo "No Bruce files found"
+
+          echo "Bruce files:"
+          ls -lh Bruce-*.* 2>/dev/null || true
 
           echo "Debug files:"
-          ls -lh ".pio/build/${{ env.SELECTED_ENV }}/firmware.elf" 2>/dev/null || true
-          ls -lh ".pio/build/${{ env.SELECTED_ENV }}/firmware.map" 2>/dev/null || true
+          ls -lh firmware.elf
+          ls -lh firmware.map 2>/dev/null || true
