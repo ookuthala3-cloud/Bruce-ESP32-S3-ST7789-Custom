@@ -1,5 +1,6 @@
 name: Manual Build (Select Environment)
 # All credits to Ninja-Jr @ninjajr
+
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +9,7 @@ on:
         required: true
         default: 'main'
         type: string
+
       environment:
         description: 'Select environment to build'
         required: true
@@ -72,6 +74,7 @@ jobs:
   compile_selected:
     name: Build ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
+
     env:
       SELECTED_ENV: ${{ github.event.inputs.environment }}
 
@@ -123,13 +126,11 @@ jobs:
         run: |
           echo "Preparing PlatformIO configuration..."
 
-          # Manual builds always use commit SHA (simple and logical)
           version="${GITHUB_SHA::7}"
           echo "Using commit SHA: $version"
 
           echo "VERSION=$version" >> $GITHUB_OUTPUT
 
-          # Apply version to platformio.ini (upstream method)
           sed -i "s/-DBRUCE_VERSION=/-DBRUCE_VERSION='\"$version\"' ; /g" ./platformio.ini
           sed -i "s/-DGIT_COMMIT_HASH='\"Homebrew\"'/!echo '-DGIT_COMMIT_HASH=\\\\\"'\$(git describe --always --dirty)'\\\\\"'/g" ./platformio.ini
 
@@ -152,7 +153,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Bruce-${{ env.SELECTED_ENV }}
-          path: Bruce-*.*
+          path: |
+            Bruce-*.*
+            .pio/build/${{ env.SELECTED_ENV }}/firmware.elf
+            .pio/build/${{ env.SELECTED_ENV }}/firmware.map
+            build-${{ env.SELECTED_ENV }}.log
           retention-days: 1
           if-no-files-found: error
 
@@ -164,3 +169,7 @@ jobs:
           echo "Git Hash: $(git describe --always --dirty)"
           echo "Built files:"
           ls -la Bruce-*.* 2>/dev/null || echo "No Bruce files found"
+
+          echo "Debug files:"
+          ls -lh ".pio/build/${{ env.SELECTED_ENV }}/firmware.elf" 2>/dev/null || true
+          ls -lh ".pio/build/${{ env.SELECTED_ENV }}/firmware.map" 2>/dev/null || true
