@@ -217,18 +217,23 @@ void _post_setup_gpio() {}
  *********************************************************************/
 void setup_gpio() {
 
-    // init setup from /ports/*/interface.h
+    // Custom ESP32-S3 board GPIO setup.
     _setup_gpio();
 
-    // Smoochiee v2 uses a AW9325 tro control GPS, MIC, Vibro and CC1101 RX/TX powerlines
-    ioExpander.init(IO_EXPANDER_ADDRESS, &Wire);
+    // TEMPORARY ISOLATION TEST:
+    // Keep the I/O expander and CC1101/SPI-bus initialization disabled
+    // until the ST7789 display has been proven to initialize correctly.
+    //
+    // ioExpander.init(IO_EXPANDER_ADDRESS, &Wire);
+    //
+    // initCC1101once(acquireSPIBus(
+    //     bruceConfigPins.CC1101_bus.sck,
+    //     bruceConfigPins.CC1101_bus.miso,
+    //     bruceConfigPins.CC1101_bus.mosi
+    // ));
 
-    initCC1101once(acquireSPIBus(
-        bruceConfigPins.CC1101_bus.sck, bruceConfigPins.CC1101_bus.miso, bruceConfigPins.CC1101_bus.mosi
-    ));
-    // acquireSPIBus() returns nullptr when these pins have no hardware controller left (e.g.
-    // ARDUINO_M5STICK_C_PLUS and others that don't share SPI with the display/SD/aux bus);
-    // initCC1101once(NULL) lets the driver fall back to managing the default SPI object itself.
+    Serial.println("[DEBUG] CC1101 + ioExpander pre-init SKIPPED");
+    Serial.flush();
 }
 
 /*********************************************************************
