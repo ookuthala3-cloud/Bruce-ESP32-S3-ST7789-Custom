@@ -27,6 +27,10 @@ static const uint8_t SCL = 8;
 #define GROVE_SDA 18
 #define GROVE_SCL 8
 
+// Bruce BadUSB serial pins
+#define BAD_TX GROVE_SDA
+#define BAD_RX GROVE_SCL
+
 // ======================================================
 // MAIN SPI BUS
 // Display + SD + CC1101 + NRF24
