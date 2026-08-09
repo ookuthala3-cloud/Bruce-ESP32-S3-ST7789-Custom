@@ -130,6 +130,7 @@ static const uint8_t G48 = 48;
 #define BTN_SELECT 14
 
 #define HAS_BTN 1
+#define HAS_5_BUTTONS 1
 #define BTN_ALIAS "\"OK\""
 #define BTN_PIN BTN_SELECT
 #define BTN_ACT LOW
