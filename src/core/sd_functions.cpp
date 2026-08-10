@@ -64,9 +64,20 @@ bool setupSdCard(uint8_t maxFiles) {
     task = true;
 #endif
 #ifdef USE_SD_MMC
-    if (!SD.begin("/sdcard", true, false, BOARD_MAX_SDMMC_FREQ, maxFiles)) {
+    Serial.println("[SD_MMC] Starting onboard SD...");
+    Serial.println("[SD_MMC] CLK=39 CMD=38 D0=40");
+
+    // ESP32-S3 CAM onboard microSD - SDMMC 1-bit mode
+    if (!SD.setPins(39, 38, 40)) {
+        Serial.println("[SD_MMC] setPins FAILED");
         sdcardMounted = false;
         result = false;
+    } else if (!SD.begin("/sdcard", true, false, BOARD_MAX_SDMMC_FREQ, maxFiles)) {
+        Serial.println("[SD_MMC] mount FAILED");
+        sdcardMounted = false;
+        result = false;
+    } else {
+        Serial.println("[SD_MMC] mount OK");
     }
 #else
     // Not using InputHandler (SdCard on default &SPI bus)
