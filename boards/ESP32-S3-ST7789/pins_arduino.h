@@ -136,13 +136,16 @@ static const uint8_t G48 = 48;
 #define BTN_ACT LOW
 
 // ======================================================
-// SD CARD
+// BUILT-IN MICRO SD - SD_MMC 1-BIT MODE
+// ESP32-S3 CAM onboard microSD slot
+// GPIO38 = CMD, GPIO39 = CLK, GPIO40 = D0/DATA
 // ======================================================
 
-#define SDCARD_CS   40
-#define SDCARD_SCK  5
-#define SDCARD_MISO 41
-#define SDCARD_MOSI 6
+#define USE_SD_MMC 1
+
+#define SD_MMC_CMD 38
+#define SD_MMC_CLK 39
+#define SD_MMC_D0  40
 
 // ======================================================
 // CC1101
