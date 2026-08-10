@@ -179,6 +179,90 @@ END:
     // Debounce + wait until buttons released
     // --------------------------------------------------
 
+void InputHandler(void) {
+
+    checkPowerSaveTime();
+
+    // --------------------------------------------------
+    // Clear previous button states
+    // --------------------------------------------------
+    PrevPress = false;
+    NextPress = false;
+    UpPress = false;
+    DownPress = false;
+    SelPress = false;
+    EscPress = false;
+    AnyKeyPress = false;
+
+    // --------------------------------------------------
+    // Read physical buttons
+    // Button -> GPIO -> GND
+    // --------------------------------------------------
+    bool up     = digitalRead(BTN_UP) == LOW;
+    bool down   = digitalRead(BTN_DOWN) == LOW;
+    bool left   = digitalRead(BTN_LEFT) == LOW;
+    bool right  = digitalRead(BTN_RIGHT) == LOW;
+    bool select = digitalRead(BTN_SELECT) == LOW;
+
+    bool anyButton =
+        up ||
+        down ||
+        left ||
+        right ||
+        select;
+
+    // --------------------------------------------------
+    // Wake screen / reset power-save timer
+    // --------------------------------------------------
+    if (anyButton) {
+
+        if (!wakeUpScreen()) {
+            AnyKeyPress = true;
+        } else {
+            goto END;
+        }
+    }
+
+    // --------------------------------------------------
+    // 5-way navigation
+    //
+    // UP     = UpPress
+    // DOWN   = DownPress
+    // LEFT   = PrevPress
+    // RIGHT  = NextPress
+    // SELECT = SelPress
+    // --------------------------------------------------
+
+    if (up) {
+        UpPress = true;
+        AnyKeyPress = true;
+    }
+
+    if (down) {
+        DownPress = true;
+        AnyKeyPress = true;
+    }
+
+    if (left) {
+        PrevPress = true;
+        AnyKeyPress = true;
+    }
+
+    if (right) {
+        NextPress = true;
+        AnyKeyPress = true;
+    }
+
+    if (select) {
+        SelPress = true;
+        AnyKeyPress = true;
+    }
+
+END:
+
+    // --------------------------------------------------
+    // Debounce + wait until button released
+    // --------------------------------------------------
     if (AnyKeyPress) {
 
         delay(DEBOUNCE_TIME);
