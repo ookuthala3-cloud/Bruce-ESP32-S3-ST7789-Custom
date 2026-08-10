@@ -1054,6 +1054,12 @@ String generalKeyboard(
                 }
             }
 #elif defined(HAS_5_BUTTONS) // Smoochie and Marauder-Mini
+            // LEFT button = Cancel / Back
+            if (check(EscPress)) {
+                current_text = String((char)27); // ASCII ESC = cancelled
+                break;
+            }
+
             if (check(SelPress)) {
                 selection_made = true;
             } else {
