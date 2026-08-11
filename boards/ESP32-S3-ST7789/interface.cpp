@@ -26,6 +26,10 @@
 #define BTN_SELECT 14
 #endif
 
+#ifndef BTN_BACK
+#define BTN_BACK 11
+#endif
+
 #ifndef TFT_BL
 #define TFT_BL 4
 #endif
@@ -42,6 +46,7 @@ void _setup_gpio() {
     pinMode(BTN_LEFT, INPUT_PULLUP);
     pinMode(BTN_RIGHT, INPUT_PULLUP);
     pinMode(BTN_SELECT, INPUT_PULLUP);
+    pinMode(BTN_BACK, INPUT_PULLUP);
 
     pinMode(TFT_BL, OUTPUT);
     digitalWrite(TFT_BL, HIGH);
@@ -93,13 +98,15 @@ void InputHandler(void) {
     bool left   = digitalRead(BTN_LEFT) == LOW;
     bool right  = digitalRead(BTN_RIGHT) == LOW;
     bool select = digitalRead(BTN_SELECT) == LOW;
+    bool back   = digitalRead(BTN_BACK) == LOW;
 
     bool anyButton =
         up ||
         down ||
         left ||
         right ||
-        select;
+        select ||
+        back;
 
     // --------------------------------------------------
     // Wake screen / reset power-save timer
@@ -121,6 +128,7 @@ void InputHandler(void) {
     // LEFT   = PrevPress
     // RIGHT  = NextPress
     // SELECT = SelPress
+    // BACK   = EscPress
     // --------------------------------------------------
 
     if (up) {
@@ -148,6 +156,11 @@ void InputHandler(void) {
         AnyKeyPress = true;
     }
 
+    if (back) {
+        EscPress = true;
+        AnyKeyPress = true;
+    }
+
 END:
 
     // --------------------------------------------------
@@ -164,7 +177,8 @@ END:
             digitalRead(BTN_DOWN) == LOW ||
             digitalRead(BTN_LEFT) == LOW ||
             digitalRead(BTN_RIGHT) == LOW ||
-            digitalRead(BTN_SELECT) == LOW
+            digitalRead(BTN_SELECT) == LOW ||
+            digitalRead(BTN_BACK) == LOW
         ) {
             delay(5);
 
